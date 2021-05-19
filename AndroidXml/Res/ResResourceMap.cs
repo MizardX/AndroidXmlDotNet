@@ -9,16 +9,22 @@ namespace AndroidXml.Res
 
         public string GetResouceName(uint? resourceId, ResStringPool strings)
         {
-            if (resourceId == null) return null;
+            if (resourceId == null)
+            {
+                return null;
+            }
+
             uint index = 0;
-            foreach (uint id in ResouceIds)
+            foreach (var id in ResouceIds)
             {
                 if (id == resourceId)
                 {
                     return strings.GetString(index);
                 }
+
                 index++;
             }
+
             return null;
         }
     }

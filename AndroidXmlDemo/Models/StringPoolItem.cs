@@ -10,10 +10,14 @@ namespace AndroidXmlDemo.Models
 
         public int Index
         {
-            get { return _index; }
+            get => _index;
             set
             {
-                if (_index == value) return;
+                if (_index == value)
+                {
+                    return;
+                }
+
                 _index = value;
                 RaisePropertyChanged(o => o.Index);
             }
@@ -27,10 +31,14 @@ namespace AndroidXmlDemo.Models
 
         public string Text
         {
-            get { return _text; }
+            get => _text;
             set
             {
-                if (_text == value) return;
+                if (_text == value)
+                {
+                    return;
+                }
+
                 _text = value;
                 RaisePropertyChanged(o => o.Text);
             }
@@ -40,14 +48,18 @@ namespace AndroidXmlDemo.Models
 
         #region Styles property
 
-        private ObservableCollection<StringPoolStyleItem> _styles = new ObservableCollection<StringPoolStyleItem>();
+        private ObservableCollection<StringPoolStyleItem> _styles = new();
 
         public ObservableCollection<StringPoolStyleItem> Styles
         {
-            get { return _styles; }
+            get => _styles;
             set
             {
-                if (_styles == value) return;
+                if (_styles == value)
+                {
+                    return;
+                }
+
                 _styles = value;
                 RaisePropertyChanged(o => o.Styles);
             }

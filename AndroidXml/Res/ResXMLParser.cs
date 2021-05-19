@@ -32,174 +32,146 @@ namespace AndroidXml.Res
         private List<ResXMLTree_attribute> _attributes;
         private object _currentExtension;
         private ResXMLTree_node _currentNode;
-        private XmlParserEventCode _eventCode;
         private ResReader _reader;
-        private ResResourceMap _resourceMap;
-        private ResStringPool _strings;
 
         public ResXMLParser(Stream source)
         {
             _source = source;
             _reader = new ResReader(_source);
-            _eventCode = XmlParserEventCode.NOT_STARTED;
+            EventCode = XmlParserEventCode.NOT_STARTED;
             _parserIterator = ParserIterator().GetEnumerator();
         }
 
-        public ResStringPool Strings
-        {
-            get { return _strings; }
-        }
+        public ResStringPool Strings { get; private set; }
 
-        public ResResourceMap ResourceMap
-        {
-            get { return _resourceMap; }
-        }
+        public ResResourceMap ResourceMap { get; private set; }
 
-        public XmlParserEventCode EventCode
-        {
-            get { return _eventCode; }
-        }
+        public XmlParserEventCode EventCode { get; private set; }
 
-        public uint? CommentID
-        {
-            get { return _currentNode == null ? null : _currentNode.Comment.Index; }
-        }
+        public uint? CommentID => _currentNode?.Comment.Index;
 
-        public string Comment
-        {
-            get { return _strings.GetString(CommentID); }
-        }
+        public string Comment => Strings.GetString(CommentID);
 
-        public uint? LineNumber
-        {
-            get { return _currentNode == null ? (uint?) null : _currentNode.LineNumber; }
-        }
+        public uint? LineNumber => _currentNode?.LineNumber;
 
         public uint? NamespacePrefixID
         {
             get
             {
                 var namespaceExt = _currentExtension as ResXMLTree_namespaceExt;
-                return namespaceExt == null ? null : namespaceExt.Prefix.Index;
+                return namespaceExt?.Prefix.Index;
             }
         }
 
-        public string NamespacePrefix
-        {
-            get { return Strings.GetString(NamespacePrefixID); }
-        }
+        public string NamespacePrefix => Strings.GetString(NamespacePrefixID);
 
         public uint? NamespaceUriID
         {
             get
             {
                 var namespaceExt = _currentExtension as ResXMLTree_namespaceExt;
-                return namespaceExt == null ? null : namespaceExt.Uri.Index;
+                return namespaceExt?.Uri.Index;
             }
         }
 
-        public string NamespaceUri
-        {
-            get { return Strings.GetString(NamespaceUriID); }
-        }
+        public string NamespaceUri => Strings.GetString(NamespaceUriID);
 
         public uint? CDataID
         {
             get
             {
                 var cdataExt = _currentExtension as ResXMLTree_cdataExt;
-                return cdataExt == null ? null : cdataExt.Data.Index;
+                return cdataExt?.Data.Index;
             }
         }
 
-        public string CData
-        {
-            get { return Strings.GetString(CDataID); }
-        }
+        public string CData => Strings.GetString(CDataID);
 
         public uint? ElementNamespaceID
         {
             get
             {
-                var attrExt = _currentExtension as ResXMLTree_attrExt;
-                if (attrExt != null) return attrExt.Namespace.Index;
-                var endElementExt = _currentExtension as ResXMLTree_endElementExt;
-                if (endElementExt != null) return endElementExt.Namespace.Index;
-                return null;
+                switch (_currentExtension)
+                {
+                    case ResXMLTree_attrExt attrExt:
+                        return attrExt.Namespace.Index;
+                    case ResXMLTree_endElementExt endElementExt:
+                        return endElementExt.Namespace.Index;
+                    default:
+                        return null;
+                }
             }
         }
 
-        public string ElementNamespace
-        {
-            get { return Strings.GetString(ElementNamespaceID); }
-        }
+        public string ElementNamespace => Strings.GetString(ElementNamespaceID);
 
         public uint? ElementNameID
         {
             get
             {
-                var attrExt = _currentExtension as ResXMLTree_attrExt;
-                if (attrExt != null) return attrExt.Name.Index;
-                var endElementExt = _currentExtension as ResXMLTree_endElementExt;
-                if (endElementExt != null) return endElementExt.Name.Index;
-                return null;
+                switch (_currentExtension)
+                {
+                    case ResXMLTree_attrExt attrExt:
+                        return attrExt.Name.Index;
+                    case ResXMLTree_endElementExt endElementExt:
+                        return endElementExt.Name.Index;
+                    default:
+                        return null;
+                }
             }
         }
 
-        public string ElementName
-        {
-            get { return Strings.GetString(ElementNameID); }
-        }
+        public string ElementName => Strings.GetString(ElementNameID);
 
         public uint? ElementIdIndex
         {
             get
             {
-                var attrExt = _currentExtension as ResXMLTree_attrExt;
-                if (attrExt != null) return attrExt.IdIndex;
-                return null;
+                switch (_currentExtension)
+                {
+                    case ResXMLTree_attrExt attrExt:
+                        return attrExt.IdIndex;
+                    default:
+                        return null;
+                }
             }
         }
 
-        public AttributeInfo ElementId
-        {
-            get { return GetAttribute(ElementIdIndex); }
-        }
+        public AttributeInfo ElementId => GetAttribute(ElementIdIndex);
 
         public uint? ElementClassIndex
         {
             get
             {
-                var attrExt = _currentExtension as ResXMLTree_attrExt;
-                if (attrExt != null) return attrExt.ClassIndex;
-                return null;
+                switch (_currentExtension)
+                {
+                    case ResXMLTree_attrExt attrExt:
+                        return attrExt.ClassIndex;
+                    default:
+                        return null;
+                }
             }
         }
 
-        public AttributeInfo ElementClass
-        {
-            get { return GetAttribute(ElementClassIndex); }
-        }
+        public AttributeInfo ElementClass => GetAttribute(ElementClassIndex);
 
         public uint? ElementStyleIndex
         {
             get
             {
-                var attrExt = _currentExtension as ResXMLTree_attrExt;
-                if (attrExt != null) return attrExt.StyleIndex;
-                return null;
+                switch (_currentExtension)
+                {
+                    case ResXMLTree_attrExt attrExt:
+                        return attrExt.StyleIndex;
+                    default:
+                        return null;
+                }
             }
         }
 
-        public AttributeInfo ElementStyle
-        {
-            get { return GetAttribute(ElementStyleIndex); }
-        }
+        public AttributeInfo ElementStyle => GetAttribute(ElementStyleIndex);
 
-        public uint AttributeCount
-        {
-            get { return _attributes == null ? 0 : (uint) _attributes.Count; }
-        }
+        public uint AttributeCount => _attributes == null ? 0 : (uint)_attributes.Count;
 
         public void Restart()
         {
@@ -210,11 +182,12 @@ namespace AndroidXml.Res
         {
             if (_parserIterator.MoveNext())
             {
-                _eventCode = _parserIterator.Current;
+                EventCode = _parserIterator.Current;
                 return _parserIterator.Current;
             }
-            _eventCode = XmlParserEventCode.END_DOCUMENT;
-            return _eventCode;
+
+            EventCode = XmlParserEventCode.END_DOCUMENT;
+            return EventCode;
         }
 
         private void ClearState()
@@ -238,6 +211,7 @@ namespace AndroidXml.Res
                 {
                     break;
                 }
+
                 var subStream = new BoundedStream(_reader.BaseStream, header.Size - 8);
                 var subReader = new ResReader(subStream);
                 switch (header.Type)
@@ -247,12 +221,12 @@ namespace AndroidXml.Res
                         _reader = subReader; // Bound whole file
                         continue; // Don't skip content
                     case ResourceType.RES_STRING_POOL_TYPE:
-                        ResStringPool_header stringPoolHeader = subReader.ReadResStringPool_header(header);
-                        _strings = subReader.ReadResStringPool(stringPoolHeader);
+                        var stringPoolHeader = subReader.ReadResStringPool_header(header);
+                        Strings = subReader.ReadResStringPool(stringPoolHeader);
                         break;
                     case ResourceType.RES_XML_RESOURCE_MAP_TYPE:
-                        ResResourceMap resourceMap = subReader.ReadResResourceMap(header);
-                        _resourceMap = resourceMap;
+                        var resourceMap = subReader.ReadResResourceMap(header);
+                        ResourceMap = resourceMap;
                         break;
                     case ResourceType.RES_XML_START_NAMESPACE_TYPE:
                         _currentNode = subReader.ReadResXMLTree_node(header);
@@ -266,14 +240,15 @@ namespace AndroidXml.Res
                         break;
                     case ResourceType.RES_XML_START_ELEMENT_TYPE:
                         _currentNode = subReader.ReadResXMLTree_node(header);
-                        ResXMLTree_attrExt attrExt = subReader.ReadResXMLTree_attrExt();
+                        var attrExt = subReader.ReadResXMLTree_attrExt();
                         _currentExtension = attrExt;
 
                         _attributes = new List<ResXMLTree_attribute>();
-                        for (int i = 0; i < attrExt.AttributeCount; i++)
+                        for (var i = 0; i < attrExt.AttributeCount; i++)
                         {
                             _attributes.Add(subReader.ReadResXMLTree_attribute());
                         }
+
                         yield return XmlParserEventCode.START_TAG;
                         break;
                     case ResourceType.RES_XML_END_ELEMENT_TYPE:
@@ -288,47 +263,66 @@ namespace AndroidXml.Res
                         break;
                     default:
                         Console.WriteLine("Warning: Skipping chunk of type {0} (0x{1:x4})",
-                                          header.Type, (int) header.Type);
+                            header.Type, (int)header.Type);
                         break;
                 }
-                byte[] junk = subStream.ReadFully();
+
+                var junk = subStream.ReadFully();
                 if (junk.Length > 0)
                 {
                     Console.WriteLine("Warning: Skipping {0} bytes at the end of a {1} (0x{2:x4}) chunk.",
-                                      junk.Length, header.Type, (int) header.Type);
+                        junk.Length, header.Type, (int)header.Type);
                 }
             }
         }
 
         public AttributeInfo GetAttribute(uint? index)
         {
-            if (index == null || _attributes == null) return null;
-            if (index >= _attributes.Count) throw new ArgumentOutOfRangeException("index");
-            ResXMLTree_attribute attr = _attributes[(int) index];
+            if (index == null || _attributes == null)
+            {
+                return null;
+            }
+
+            if (index >= _attributes.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            var attr = _attributes[(int)index];
             return new AttributeInfo(this, attr);
         }
 
         public uint? IndexOfAttribute(string ns, string attribute)
         {
-            uint? nsID = _strings.IndexOfString(ns);
-            uint? nameID = _strings.IndexOfString(attribute);
-            if (nameID == null) return null;
+            var nsID = Strings.IndexOfString(ns);
+            var nameID = Strings.IndexOfString(attribute);
+            if (nameID == null)
+            {
+                return null;
+            }
+
             uint index = 0;
-            foreach (ResXMLTree_attribute attr in _attributes)
+            foreach (var attr in _attributes)
             {
                 if (attr.Namespace.Index == nsID && attr.Name.Index == nameID)
                 {
                     return index;
                 }
+
                 index++;
             }
+
             return null;
         }
 
         public void Close()
         {
-            if (_eventCode == XmlParserEventCode.CLOSED) return;
-            _eventCode = XmlParserEventCode.CLOSED;
+            if (EventCode == XmlParserEventCode.CLOSED)
+            {
+                return;
+            }
+
+            EventCode = XmlParserEventCode.CLOSED;
             _reader.Close();
         }
 
@@ -347,28 +341,19 @@ namespace AndroidXml.Res
                 NamespaceID = attribute.Namespace.Index;
             }
 
-            public uint? NamespaceID { get; private set; }
+            public uint? NamespaceID { get; }
 
-            public string Namespace
-            {
-                get { return _parser.Strings.GetString(NamespaceID); }
-            }
+            public string Namespace => _parser.Strings.GetString(NamespaceID);
 
-            public uint? NameID { get; private set; }
+            public uint? NameID { get; }
 
-            public string Name
-            {
-                get { return _parser.Strings.GetString(NameID); }
-            }
+            public string Name => _parser.Strings.GetString(NameID);
 
-            public uint? ValueStringID { get; private set; }
+            public uint? ValueStringID { get; }
 
-            public string ValueString
-            {
-                get { return _parser.Strings.GetString(ValueStringID); }
-            }
+            public string ValueString => _parser.Strings.GetString(ValueStringID);
 
-            public Res_value TypedValue { get; private set; }
+            public Res_value TypedValue { get; }
         }
 
         #endregion

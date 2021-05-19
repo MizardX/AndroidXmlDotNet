@@ -9,11 +9,17 @@ namespace AndroidXmlDemo.Commands
         private readonly Action<T> _execute;
         private bool _canExecuteValue;
 
-        public DelegateCommand(Action<T> execute) : this(execute, true) {}
+        public DelegateCommand(Action<T> execute) : this(execute, true)
+        {
+        }
 
-        public DelegateCommand(Action<T> execute, Func<T, bool> canExecute) : this(execute, canExecute, true) {}
+        public DelegateCommand(Action<T> execute, Func<T, bool> canExecute) : this(execute, canExecute, true)
+        {
+        }
 
-        public DelegateCommand(Action<T> execute, bool canExecuteInitial) : this(execute, null, canExecuteInitial) {}
+        public DelegateCommand(Action<T> execute, bool canExecuteInitial) : this(execute, null, canExecuteInitial)
+        {
+        }
 
         public DelegateCommand(Action<T> execute, Func<T, bool> canExecute, bool canExecuteInitial)
         {
@@ -24,12 +30,30 @@ namespace AndroidXmlDemo.Commands
 
         protected bool CanExecuteValue
         {
-            get { return _canExecuteValue; }
+            get => _canExecuteValue;
             set
             {
-                if (value == _canExecuteValue) return;
+                if (value == _canExecuteValue)
+                {
+                    return;
+                }
+
                 _canExecuteValue = value;
                 RaiseCanExecuteChanged();
+            }
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            RaiseCanExecuteChanged(EventArgs.Empty);
+        }
+
+        public void RaiseCanExecuteChanged(EventArgs e)
+        {
+            var handler = CanExecuteChanged;
+            if (handler != null)
+            {
+                handler(this, e);
             }
         }
 
@@ -37,10 +61,14 @@ namespace AndroidXmlDemo.Commands
 
         public void Execute(object parameter)
         {
-            if (_execute == null) return;
+            if (_execute == null)
+            {
+                return;
+            }
+
             try
             {
-                _execute((T) parameter);
+                _execute((T)parameter);
             }
             catch (Exception ex)
             {
@@ -50,10 +78,14 @@ namespace AndroidXmlDemo.Commands
 
         public bool CanExecute(object parameter)
         {
-            if (_canExecuteDelegate == null) return _canExecuteValue;
+            if (_canExecuteDelegate == null)
+            {
+                return _canExecuteValue;
+            }
+
             try
             {
-                bool result = _canExecuteDelegate((T) parameter);
+                var result = _canExecuteDelegate((T)parameter);
                 CanExecuteValue = result;
                 return result;
             }
@@ -67,26 +99,25 @@ namespace AndroidXmlDemo.Commands
         public event EventHandler CanExecuteChanged;
 
         #endregion
-
-        public void RaiseCanExecuteChanged()
-        {
-            RaiseCanExecuteChanged(EventArgs.Empty);
-        }
-
-        public void RaiseCanExecuteChanged(EventArgs e)
-        {
-            EventHandler handler = CanExecuteChanged;
-            if (handler != null) handler(this, e);
-        }
     }
 
     public class DelegateCommand : DelegateCommand<object>
     {
-        public DelegateCommand(Action execute) : base(o => execute()) {}
-        public DelegateCommand(Action execute, Func<bool> canExecute) : base(o => execute(), o => canExecute()) {}
-        public DelegateCommand(Action execute, bool canExecuteInitial) : base(o => execute(), canExecuteInitial) {}
+        public DelegateCommand(Action execute) : base(o => execute())
+        {
+        }
+
+        public DelegateCommand(Action execute, Func<bool> canExecute) : base(o => execute(), o => canExecute())
+        {
+        }
+
+        public DelegateCommand(Action execute, bool canExecuteInitial) : base(o => execute(), canExecuteInitial)
+        {
+        }
 
         public DelegateCommand(Action execute, Func<bool> canExecute, bool canExecuteInitial)
-            : base(o => execute(), o => canExecute(), canExecuteInitial) {}
+            : base(o => execute(), o => canExecute(), canExecuteInitial)
+        {
+        }
     }
 }

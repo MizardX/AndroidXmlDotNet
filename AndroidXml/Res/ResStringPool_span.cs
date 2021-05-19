@@ -11,7 +11,7 @@ namespace AndroidXml.Res
 
         public bool IsEnd
         {
-            get { return Name.Index == null; }
+            get => Name.Index == null;
             set
             {
                 if (value)

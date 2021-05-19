@@ -31,10 +31,10 @@ namespace AndroidXmlDemo.ViewModels
 
         public void OnError(string message)
         {
-            EventHandler<ArgumentEventArgs<string>> handler = Error;
+            var handler = Error;
             if (handler != null)
             {
-                handler(this, new ArgumentEventArgs<string> {Argument = message});
+                handler(this, new ArgumentEventArgs<string> { Argument = message });
             }
         }
 
@@ -48,10 +48,14 @@ namespace AndroidXmlDemo.ViewModels
 
         public string Filename
         {
-            get { return _filename; }
+            get => _filename;
             set
             {
-                if (value == _filename) return;
+                if (value == _filename)
+                {
+                    return;
+                }
+
                 _filename = value;
                 RaisePropertyChanged(o => o.Filename);
                 _loadCommand.RaiseCanExecuteChanged();
@@ -67,10 +71,14 @@ namespace AndroidXmlDemo.ViewModels
 
         public FlowDocument FormattedDocument
         {
-            get { return _formattedDocument; }
+            get => _formattedDocument;
             set
             {
-                if (value == _formattedDocument) return;
+                if (value == _formattedDocument)
+                {
+                    return;
+                }
+
                 _formattedDocument = value;
                 RaisePropertyChanged(o => o.FormattedDocument);
             }
@@ -84,10 +92,14 @@ namespace AndroidXmlDemo.ViewModels
 
         public XmlReader Reader
         {
-            get { return _reader; }
+            get => _reader;
             set
             {
-                if (_reader == value) return;
+                if (_reader == value)
+                {
+                    return;
+                }
+
                 _reader = value;
                 RaisePropertyChanged(o => o.Reader);
             }
@@ -101,7 +113,7 @@ namespace AndroidXmlDemo.ViewModels
 
         #region BrowseCommand
 
-        public EventCommand<string> BrowseCommand { get; private set; }
+        public EventCommand<string> BrowseCommand { get; }
 
         public void BrowseCommandCompleted(string filename)
         {
@@ -124,10 +136,14 @@ namespace AndroidXmlDemo.ViewModels
 
         public DelegateCommand LoadCommand
         {
-            get { return _loadCommand; }
+            get => _loadCommand;
             set
             {
-                if (value == _loadCommand) return;
+                if (value == _loadCommand)
+                {
+                    return;
+                }
+
                 _loadCommand = value;
                 RaisePropertyChanged(o => o.LoadCommand);
             }
@@ -137,13 +153,14 @@ namespace AndroidXmlDemo.ViewModels
         {
             try
             {
-                byte[] data = File.ReadAllBytes(Filename);
+                var data = File.ReadAllBytes(Filename);
                 if (data.Length == 0)
                 {
                     throw new IOException("Empty file");
                 }
+
                 var stream = new MemoryStream(data);
-                if (data[0] == '<' || char.IsWhiteSpace((char) data[0]))
+                if (data[0] == '<' || char.IsWhiteSpace((char)data[0]))
                 {
                     // Normal XML file
                     _reader = new XmlTextReader(stream)
@@ -156,6 +173,7 @@ namespace AndroidXmlDemo.ViewModels
                     // Android binary XML
                     _reader = new AndroidXmlReader(stream);
                 }
+
                 ShowResult(_reader);
             }
             catch (Exception ex)
@@ -177,13 +195,13 @@ namespace AndroidXmlDemo.ViewModels
             var section = new Section(paragraph);
             var doc = new FlowDocument(section);
 
-            int indent = 0;
+            var indent = 0;
 
             var namespaceStack = new Stack<List<NamespaceInfo>>();
             var unknownNamespaces = new List<NamespaceInfo>();
             var knownNamespaces = new List<NamespaceInfo>();
 
-            knownNamespaces.Add(new NamespaceInfo {Prefix = "", Uri = ""});
+            knownNamespaces.Add(new NamespaceInfo { Prefix = "", Uri = "" });
 
             while (reader.Read())
             {
@@ -192,31 +210,32 @@ namespace AndroidXmlDemo.ViewModels
                     case XmlNodeType.Element:
                     {
                         var line = new Span();
-                        line.Inlines.Add(new string(' ', indent*2));
-                        line.Inlines.Add(new Run("<") {Foreground = _delimiterColor});
+                        line.Inlines.Add(new string(' ', indent * 2));
+                        line.Inlines.Add(new Run("<") { Foreground = _delimiterColor });
                         if (!string.IsNullOrEmpty(reader.Prefix))
                         {
-                            line.Inlines.Add(new Run(reader.Prefix) {Foreground = _nameColor});
-                            line.Inlines.Add(new Run(":") {Foreground = _delimiterColor});
+                            line.Inlines.Add(new Run(reader.Prefix) { Foreground = _nameColor });
+                            line.Inlines.Add(new Run(":") { Foreground = _delimiterColor });
                         }
-                        line.Inlines.Add(new Run(reader.LocalName) {Foreground = _nameColor});
+
+                        line.Inlines.Add(new Run(reader.LocalName) { Foreground = _nameColor });
 
                         namespaceStack.Push(knownNamespaces);
                         knownNamespaces = knownNamespaces.ToList();
                         if (!knownNamespaces.Any(ni => ni.Prefix == reader.Prefix && ni.Uri == reader.NamespaceURI))
                         {
-                            var info = new NamespaceInfo {Prefix = reader.Prefix, Uri = reader.NamespaceURI};
+                            var info = new NamespaceInfo { Prefix = reader.Prefix, Uri = reader.NamespaceURI };
                             knownNamespaces.RemoveAll(ni => ni.Prefix == info.Prefix);
                             knownNamespaces.Add(info);
                             unknownNamespaces.Add(info);
                         }
 
-                        bool first = true;
-                        for (int i = 0; i < reader.AttributeCount; i++)
+                        var first = true;
+                        for (var i = 0; i < reader.AttributeCount; i++)
                         {
                             if (!knownNamespaces.Any(ni => ni.Prefix == reader.Prefix && ni.Uri == reader.NamespaceURI))
                             {
-                                var info = new NamespaceInfo {Prefix = reader.Prefix, Uri = reader.NamespaceURI};
+                                var info = new NamespaceInfo { Prefix = reader.Prefix, Uri = reader.NamespaceURI };
                                 knownNamespaces.RemoveAll(ni => ni.Prefix == info.Prefix);
                                 knownNamespaces.Add(info);
                                 unknownNamespaces.Add(info);
@@ -231,29 +250,31 @@ namespace AndroidXmlDemo.ViewModels
                                 paragraph.Inlines.Add(line);
                                 paragraph.Inlines.Add(new LineBreak());
                                 line = new Span();
-                                line.Inlines.Add(new string(' ', indent*2 + 4));
+                                line.Inlines.Add(new string(' ', indent * 2 + 4));
                             }
+
                             first = false;
 
                             reader.MoveToAttribute(i);
 
                             if (!string.IsNullOrEmpty(reader.Prefix))
                             {
-                                line.Inlines.Add(new Run(reader.Prefix) {Foreground = _attrNameColor});
-                                line.Inlines.Add(new Run(":") {Foreground = _delimiterColor});
+                                line.Inlines.Add(new Run(reader.Prefix) { Foreground = _attrNameColor });
+                                line.Inlines.Add(new Run(":") { Foreground = _delimiterColor });
                             }
-                            line.Inlines.Add(new Run(reader.LocalName) {Foreground = _attrNameColor});
-                            line.Inlines.Add(new Run("=") {Foreground = _delimiterColor});
-                            line.Inlines.Add(new Run("\"") {Foreground = _attrQuotesColor});
+
+                            line.Inlines.Add(new Run(reader.LocalName) { Foreground = _attrNameColor });
+                            line.Inlines.Add(new Run("=") { Foreground = _delimiterColor });
+                            line.Inlines.Add(new Run("\"") { Foreground = _attrQuotesColor });
 
                             FormatEntities(line.Inlines, reader.Value, _attrValueColor);
 
-                            line.Inlines.Add(new Run("\"") {Foreground = _attrQuotesColor});
+                            line.Inlines.Add(new Run("\"") { Foreground = _attrQuotesColor });
                         }
 
                         reader.MoveToElement();
 
-                        foreach (NamespaceInfo info in unknownNamespaces)
+                        foreach (var info in unknownNamespaces)
                         {
                             if (first)
                             {
@@ -264,33 +285,36 @@ namespace AndroidXmlDemo.ViewModels
                                 paragraph.Inlines.Add(line);
                                 paragraph.Inlines.Add(new LineBreak());
                                 line = new Span();
-                                line.Inlines.Add(new string(' ', indent*2 + 4));
+                                line.Inlines.Add(new string(' ', indent * 2 + 4));
                             }
+
                             first = false;
 
-                            line.Inlines.Add(new Run("xmlns") {Foreground = _attrNameColor});
+                            line.Inlines.Add(new Run("xmlns") { Foreground = _attrNameColor });
                             if (!string.IsNullOrEmpty(info.Prefix))
                             {
-                                line.Inlines.Add(new Run(":") {Foreground = _delimiterColor});
-                                line.Inlines.Add(new Run(info.Prefix) {Foreground = _attrNameColor});
+                                line.Inlines.Add(new Run(":") { Foreground = _delimiterColor });
+                                line.Inlines.Add(new Run(info.Prefix) { Foreground = _attrNameColor });
                             }
-                            line.Inlines.Add(new Run("=") {Foreground = _delimiterColor});
-                            line.Inlines.Add(new Run("\"") {Foreground = _attrQuotesColor});
+
+                            line.Inlines.Add(new Run("=") { Foreground = _delimiterColor });
+                            line.Inlines.Add(new Run("\"") { Foreground = _attrQuotesColor });
 
                             FormatEntities(line.Inlines, info.Uri, _attrValueColor);
 
-                            line.Inlines.Add(new Run("\"") {Foreground = _attrQuotesColor});
+                            line.Inlines.Add(new Run("\"") { Foreground = _attrQuotesColor });
                         }
+
                         unknownNamespaces.Clear();
 
                         if (reader.IsEmptyElement)
                         {
-                            line.Inlines.Add(new Run("/>") {Foreground = _delimiterColor});
+                            line.Inlines.Add(new Run("/>") { Foreground = _delimiterColor });
                             knownNamespaces = namespaceStack.Pop();
                         }
                         else
                         {
-                            line.Inlines.Add(new Run(">") {Foreground = _delimiterColor});
+                            line.Inlines.Add(new Run(">") { Foreground = _delimiterColor });
                             indent++;
                         }
 
@@ -303,16 +327,17 @@ namespace AndroidXmlDemo.ViewModels
                         indent--;
 
                         var line = new Span();
-                        line.Inlines.Add(new string(' ', indent*2));
+                        line.Inlines.Add(new string(' ', indent * 2));
 
-                        line.Inlines.Add(new Run("</") {Foreground = _delimiterColor});
+                        line.Inlines.Add(new Run("</") { Foreground = _delimiterColor });
                         if (!string.IsNullOrEmpty(reader.Prefix))
                         {
-                            line.Inlines.Add(new Run(reader.Prefix) {Foreground = _nameColor});
-                            line.Inlines.Add(new Run(":") {Foreground = _delimiterColor});
+                            line.Inlines.Add(new Run(reader.Prefix) { Foreground = _nameColor });
+                            line.Inlines.Add(new Run(":") { Foreground = _delimiterColor });
                         }
-                        line.Inlines.Add(new Run(reader.LocalName) {Foreground = _nameColor});
-                        line.Inlines.Add(new Run(">") {Foreground = _delimiterColor});
+
+                        line.Inlines.Add(new Run(reader.LocalName) { Foreground = _nameColor });
+                        line.Inlines.Add(new Run(">") { Foreground = _delimiterColor });
 
                         paragraph.Inlines.Add(line);
 
@@ -323,24 +348,26 @@ namespace AndroidXmlDemo.ViewModels
                     case XmlNodeType.CDATA:
                     {
                         var line = new Span();
-                        line.Inlines.Add(new string(' ', indent*2));
+                        line.Inlines.Add(new string(' ', indent * 2));
 
-                        line.Inlines.Add(new Run("<![CDATA[") {Foreground = _cdataSectionColor});
+                        line.Inlines.Add(new Run("<![CDATA[") { Foreground = _cdataSectionColor });
 
-                        string value = reader.Value;
-                        bool first = true;
-                        foreach (string piece in value.Split(new[] {"]]>"}, StringSplitOptions.None))
+                        var value = reader.Value;
+                        var first = true;
+                        foreach (var piece in value.Split(new[] { "]]>" }, StringSplitOptions.None))
                         {
                             if (!first)
                             {
                                 line.Inlines.Add("]]");
-                                line.Inlines.Add(new Run("]]><![CDATA[") {Foreground = _cdataSectionColor});
+                                line.Inlines.Add(new Run("]]><![CDATA[") { Foreground = _cdataSectionColor });
                                 line.Inlines.Add(">");
                             }
+
                             first = false;
                             line.Inlines.Add(piece);
                         }
-                        line.Inlines.Add(new Run("]]>") {Foreground = _cdataSectionColor});
+
+                        line.Inlines.Add(new Run("]]>") { Foreground = _cdataSectionColor });
 
                         paragraph.Inlines.Add(line);
 
@@ -349,7 +376,7 @@ namespace AndroidXmlDemo.ViewModels
                     case XmlNodeType.Text:
                     {
                         var line = new Span();
-                        line.Inlines.Add(new string(' ', indent*2));
+                        line.Inlines.Add(new string(' ', indent * 2));
 
                         FormatEntities(line.Inlines, reader.Value, _textColor);
 
@@ -360,12 +387,12 @@ namespace AndroidXmlDemo.ViewModels
                     case XmlNodeType.Comment:
                     {
                         var line = new Span();
-                        line.Inlines.Add(new string(' ', indent*2));
+                        line.Inlines.Add(new string(' ', indent * 2));
 
-                        string value = reader.Value;
+                        var value = reader.Value;
                         value = value.Replace("--", "- -");
                         value = value.Replace("--", "- -"); // twice to get all
-                        line.Inlines.Add(new Run("<!--" + value + "-->") {Foreground = _commentColor});
+                        line.Inlines.Add(new Run("<!--" + value + "-->") { Foreground = _commentColor });
 
                         paragraph.Inlines.Add(line);
 
@@ -386,30 +413,32 @@ namespace AndroidXmlDemo.ViewModels
 
         private void FormatEntities(InlineCollection inlines, string value, Brush textColor)
         {
-            int lastIndex = 0;
-            int index = value.IndexOfAny(new[] {'&', '<', '>', '"'});
+            var lastIndex = 0;
+            var index = value.IndexOfAny(new[] { '&', '<', '>', '"' });
             while (index >= 0)
             {
-                inlines.Add(new Run(value.Substring(lastIndex, index - lastIndex)) {Foreground = textColor});
+                inlines.Add(new Run(value.Substring(lastIndex, index - lastIndex)) { Foreground = textColor });
                 switch (value[index])
                 {
                     case '&':
-                        inlines.Add(new Run("&amp;") {Foreground = _nameColor});
+                        inlines.Add(new Run("&amp;") { Foreground = _nameColor });
                         break;
                     case '<':
-                        inlines.Add(new Run("&lt;") {Foreground = _nameColor});
+                        inlines.Add(new Run("&lt;") { Foreground = _nameColor });
                         break;
                     case '>':
-                        inlines.Add(new Run("&gt;") {Foreground = _nameColor});
+                        inlines.Add(new Run("&gt;") { Foreground = _nameColor });
                         break;
                     case '"':
-                        inlines.Add(new Run("&quot;") {Foreground = _nameColor});
+                        inlines.Add(new Run("&quot;") { Foreground = _nameColor });
                         break;
                 }
+
                 lastIndex = index + 1;
-                index = value.IndexOfAny(new[] {'&', '<', '>', '"'}, lastIndex);
+                index = value.IndexOfAny(new[] { '&', '<', '>', '"' }, lastIndex);
             }
-            inlines.Add(new Run(value.Substring(lastIndex)) {Foreground = textColor});
+
+            inlines.Add(new Run(value.Substring(lastIndex)) { Foreground = textColor });
         }
 
         private class NamespaceInfo
@@ -422,7 +451,7 @@ namespace AndroidXmlDemo.ViewModels
 
         #region ShowStringPoolCommand
 
-        public EventCommand<ResStringPool> ShowStringPoolCommand { get; private set; }
+        public EventCommand<ResStringPool> ShowStringPoolCommand { get; }
 
         #endregion // ShowStringPoolCommand
 

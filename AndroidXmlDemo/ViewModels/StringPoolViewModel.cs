@@ -15,22 +15,23 @@ namespace AndroidXmlDemo.ViewModels
 
         private void InitializeItems(ResStringPool stringPool)
         {
-            for (int i = 0; i < stringPool.StringData.Count; i++)
+            for (var i = 0; i < stringPool.StringData.Count; i++)
             {
                 var item = new StringPoolItem
                 {
                     Index = i,
-                    Text = stringPool.StringData[i],
+                    Text = stringPool.StringData[i]
                 };
-                foreach (ResStringPool_span style in stringPool.GetStyles((uint) i))
+                foreach (var style in stringPool.GetStyles((uint)i))
                 {
                     item.Styles.Add(new StringPoolStyleItem
                     {
-                        FirstChar = (int) style.FirstChar,
-                        LastChar = (int) style.LastChar,
+                        FirstChar = (int)style.FirstChar,
+                        LastChar = (int)style.LastChar,
                         Name = stringPool.GetString(style.Name)
                     });
                 }
+
                 _items.Add(item);
             }
         }
@@ -41,14 +42,18 @@ namespace AndroidXmlDemo.ViewModels
 
         #region Items
 
-        private ObservableCollection<StringPoolItem> _items = new ObservableCollection<StringPoolItem>();
+        private ObservableCollection<StringPoolItem> _items = new();
 
         public ObservableCollection<StringPoolItem> Items
         {
-            get { return _items; }
+            get => _items;
             set
             {
-                if (_items == value) return;
+                if (_items == value)
+                {
+                    return;
+                }
+
                 _items = value;
                 RaisePropertyChanged(o => o.Items);
             }
@@ -62,10 +67,14 @@ namespace AndroidXmlDemo.ViewModels
 
         public StringPoolItem SelectedItem
         {
-            get { return _selectedItem; }
+            get => _selectedItem;
             set
             {
-                if (_selectedItem == value) return;
+                if (_selectedItem == value)
+                {
+                    return;
+                }
+
                 _selectedItem = value;
                 RaisePropertyChanged(o => o.SelectedItem);
             }

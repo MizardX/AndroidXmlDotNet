@@ -10,7 +10,9 @@ namespace AndroidXml
         protected readonly BinaryWriter _writer;
 
         public ResWriter(Stream output)
-            : this(new BinaryWriter(output)) {}
+            : this(new BinaryWriter(output))
+        {
+        }
 
         public ResWriter(BinaryWriter writer)
         {
@@ -18,24 +20,21 @@ namespace AndroidXml
         }
 
         /// <summary>
-        /// Gets the underlying <c>BinaryWriter</c> to write primitive values.
+        ///     Gets the underlying <c>BinaryWriter</c> to write primitive values.
         /// </summary>
-        public BinaryWriter Writer
-        {
-            get { return _writer; }
-        }
+        public BinaryWriter Writer => _writer;
 
         public virtual void Write(Res_value data)
         {
             _writer.Write(data.Size);
             _writer.Write(data.Res0);
-            _writer.Write((byte) data.DataType);
+            _writer.Write((byte)data.DataType);
             _writer.Write(data.RawData);
         }
 
         public virtual void Write(ResChunk_header data)
         {
-            _writer.Write((ushort) data.Type);
+            _writer.Write((ushort)data.Type);
             _writer.Write(data.HeaderSize);
             _writer.Write(data.Size);
         }
@@ -45,7 +44,7 @@ namespace AndroidXml
             Write(data.Header);
             _writer.Write(data.StringCount);
             _writer.Write(data.StyleCount);
-            _writer.Write((uint) data.Flags);
+            _writer.Write((uint)data.Flags);
             _writer.Write(data.StringStart);
             _writer.Write(data.StylesStart);
         }
@@ -78,7 +77,7 @@ namespace AndroidXml
         public virtual void Write(ResTable_entry data)
         {
             _writer.Write(data.Size);
-            _writer.Write((ushort) data.Flags);
+            _writer.Write((ushort)data.Flags);
             Write(data.Key);
         }
 
@@ -97,7 +96,7 @@ namespace AndroidXml
         public virtual void Write(ResTable_map_entry data)
         {
             _writer.Write(data.Size);
-            _writer.Write((ushort) data.Flags);
+            _writer.Write((ushort)data.Flags);
             Write(data.Key);
             Write(data.Parent);
             _writer.Write(data.Count);
@@ -108,8 +107,8 @@ namespace AndroidXml
             Write(data.Header);
             _writer.Write(data.Id);
             var stringData = new byte[256];
-            byte[] tempData = Encoding.Unicode.GetBytes(data.Name);
-            int length = Math.Min(255, tempData.Length); // last pair of bytes must be 0
+            var tempData = Encoding.Unicode.GetBytes(data.Name);
+            var length = Math.Min(255, tempData.Length); // last pair of bytes must be 0
             Array.Copy(tempData, stringData, length);
             _writer.Write(stringData);
             _writer.Write(data.TypeStrings);

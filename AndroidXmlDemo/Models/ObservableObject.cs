@@ -7,10 +7,7 @@ namespace AndroidXmlDemo.Models
 {
     public abstract class ObservableObject<T> : INotifyPropertyChanged where T : ObservableObject<T>
     {
-        protected PropertyChangedEventHandler PropertyChangedHandler
-        {
-            get { return PropertyChanged; }
-        }
+        protected PropertyChangedEventHandler PropertyChangedHandler => PropertyChanged;
 
         #region INotifyPropertyChanged Members
 
@@ -20,7 +17,7 @@ namespace AndroidXmlDemo.Models
 
         public void RaisePropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            var handler = PropertyChanged;
             if (handler != null)
             {
                 var e = new PropertyChangedEventArgs(propertyName);
@@ -34,22 +31,26 @@ namespace AndroidXmlDemo.Models
             {
                 throw new ArgumentNullException("expr");
             }
+
             var memberExpression = expr.Body as MemberExpression;
             if (memberExpression == null)
             {
                 throw new ArgumentException("Not a MemberExpression", "expr");
             }
+
             var parameterExpression = memberExpression.Expression as ParameterExpression;
             if (parameterExpression == null || !expr.Parameters.Contains(parameterExpression))
             {
-                throw new ArgumentException("Not a property of " + typeof (T).Name, "expr");
+                throw new ArgumentException("Not a property of " + typeof(T).Name, "expr");
             }
-            MemberInfo memberInfo = memberExpression.Member;
+
+            var memberInfo = memberExpression.Member;
             if (!(memberInfo is PropertyInfo))
             {
-                string message = string.Format("Not a property: {0}.{1}", typeof (T).Name, memberInfo.Name);
+                var message = string.Format("Not a property: {0}.{1}", typeof(T).Name, memberInfo.Name);
                 throw new ArgumentException(message, "expr");
             }
+
             RaisePropertyChanged(memberInfo.Name);
         }
     }

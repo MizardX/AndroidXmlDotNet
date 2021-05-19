@@ -6,6 +6,7 @@ namespace AndroidXml.Res
     public class ResStringPool
     {
         public ResStringPool_header Header { get; set; }
+
         //public List<uint> StringIndices { get; set; }
         //public List<uint> StyleIndices { get; set; }
         public List<string> StringData { get; set; }
@@ -18,23 +19,37 @@ namespace AndroidXml.Res
 
         public string GetString(uint? index)
         {
-            if (index == null) return "";
+            if (index == null)
+            {
+                return "";
+            }
+
             if (index >= StringData.Count)
             {
-                throw new ArgumentOutOfRangeException("index", index, string.Format("index >= {0}", StringData.Count));
+                throw new ArgumentOutOfRangeException(nameof(index), index, $"index >= {StringData.Count}");
             }
-            return StringData[(int) index];
+
+            return StringData[(int)index];
         }
 
         public uint? IndexOfString(string target)
         {
-            if (string.IsNullOrEmpty(target)) return null;
-            uint index = 0;
-            foreach (string s in StringData)
+            if (string.IsNullOrEmpty(target))
             {
-                if (s == target) return index;
+                return null;
+            }
+
+            uint index = 0;
+            foreach (var s in StringData)
+            {
+                if (s == target)
+                {
+                    return index;
+                }
+
                 index++;
             }
+
             return null;
         }
 
@@ -43,10 +58,11 @@ namespace AndroidXml.Res
             if (stringIndex >= StringData.Count)
             {
                 throw new ArgumentOutOfRangeException(
-                    "stringIndex", stringIndex, string.Format("index >= {0}", StringData.Count));
+                    nameof(stringIndex), stringIndex, $"index >= {StringData.Count}");
             }
-            int currentIndex = 0;
-            foreach (ResStringPool_span style in StyleData)
+
+            var currentIndex = 0;
+            foreach (var style in StyleData)
             {
                 if (style.IsEnd)
                 {

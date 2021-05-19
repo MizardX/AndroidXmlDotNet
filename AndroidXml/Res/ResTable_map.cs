@@ -3,9 +3,9 @@
 namespace AndroidXml.Res
 {
     /// <summary>
-    /// Not sure this class is correct, since the original code dealing 
-    /// with this is pretty cryptic.
-    /// TODO: Check this, and remove this comment.
+    ///     Not sure this class is correct, since the original code dealing
+    ///     with this is pretty cryptic.
+    ///     TODO: Check this, and remove this comment.
     /// </summary>
     [Serializable]
     public class ResTable_map
@@ -17,7 +17,7 @@ namespace AndroidXml.Res
         {
             get
             {
-                var ident = (MapMetaAttributes?) Name.Ident;
+                var ident = (MapMetaAttributes?)Name.Ident;
                 switch (ident)
                 {
                     case MapMetaAttributes.ATTR_TYPE:
@@ -39,7 +39,7 @@ namespace AndroidXml.Res
             {
                 if (value != null)
                 {
-                    Name.Ident = (uint) value.Value;
+                    Name.Ident = (uint)value.Value;
                 }
                 else if (MetaName != null)
                 {
@@ -52,8 +52,12 @@ namespace AndroidXml.Res
         {
             get
             {
-                if (MetaName != MapMetaAttributes.ATTR_TYPE) return null;
-                return (MapAllowedTypes?) Value.RawData;
+                if (MetaName != MapMetaAttributes.ATTR_TYPE)
+                {
+                    return null;
+                }
+
+                return (MapAllowedTypes?)Value.RawData;
             }
             set
             {
@@ -62,11 +66,13 @@ namespace AndroidXml.Res
                     throw new InvalidOperationException(
                         "Can't set AllowedTypes unless MetaName is ATTR_TYPE (0x01000000)");
                 }
+
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
-                Value.RawData = (uint) value.Value;
+
+                Value.RawData = (uint)value.Value;
             }
         }
 
@@ -74,8 +80,12 @@ namespace AndroidXml.Res
         {
             get
             {
-                if (MetaName != MapMetaAttributes.ATTR_L10N) return null;
-                return (MapL10N?) Value.RawData;
+                if (MetaName != MapMetaAttributes.ATTR_L10N)
+                {
+                    return null;
+                }
+
+                return (MapL10N?)Value.RawData;
             }
             set
             {
@@ -84,11 +94,13 @@ namespace AndroidXml.Res
                     throw new InvalidOperationException(
                         "Can't set L10N unless MetaName is ATTR_L10N (0x01000003)");
                 }
+
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
-                Value.RawData = (uint) value.Value;
+
+                Value.RawData = (uint)value.Value;
             }
         }
     }

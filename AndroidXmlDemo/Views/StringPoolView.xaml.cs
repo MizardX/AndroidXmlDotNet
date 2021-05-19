@@ -4,7 +4,7 @@ using AndroidXmlDemo.ViewModels;
 namespace AndroidXmlDemo.Views
 {
     /// <summary>
-    /// Lets the user browse the string pool.
+    ///     Lets the user browse the string pool.
     /// </summary>
     public partial class StringPoolView : Window
     {

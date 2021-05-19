@@ -8,10 +8,14 @@
 
         public int FirstChar
         {
-            get { return _firstChar; }
+            get => _firstChar;
             set
             {
-                if (_firstChar == value) return;
+                if (_firstChar == value)
+                {
+                    return;
+                }
+
                 _firstChar = value;
                 RaisePropertyChanged(o => o.FirstChar);
             }
@@ -25,10 +29,14 @@
 
         public int LastChar
         {
-            get { return _lastChar; }
+            get => _lastChar;
             set
             {
-                if (_lastChar == value) return;
+                if (_lastChar == value)
+                {
+                    return;
+                }
+
                 _lastChar = value;
                 RaisePropertyChanged(o => o.LastChar);
             }
@@ -42,10 +50,14 @@
 
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
-                if (_name == value) return;
+                if (_name == value)
+                {
+                    return;
+                }
+
                 _name = value;
                 RaisePropertyChanged(o => o.Name);
             }

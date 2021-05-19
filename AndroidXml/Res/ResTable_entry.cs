@@ -14,6 +14,6 @@ namespace AndroidXml.Res
     public enum EntryFlags
     {
         FLAG_COMPLEX = 0x0001,
-        FLAG_PUBLIC = 0x0002,
+        FLAG_PUBLIC = 0x0002
     }
 }

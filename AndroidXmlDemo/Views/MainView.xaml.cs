@@ -8,14 +8,14 @@ using Microsoft.Win32;
 namespace AndroidXmlDemo.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainView : Window
     {
-        private readonly OpenFileDialog _openFileDialog = new OpenFileDialog
+        private readonly OpenFileDialog _openFileDialog = new()
         {
             CheckFileExists = true,
-            Filter = "Android Binary XML (*.xml)|*.xml|All Files (*.*)|*.*",
+            Filter = "Android Binary XML (*.xml)|*.xml|All Files (*.*)|*.*"
         };
 
         private readonly MainViewModel _viewModel;
@@ -50,7 +50,11 @@ namespace AndroidXmlDemo.Views
         private void BrowseCommand_Executed(object sender, ArgumentEventArgs<string> e)
         {
             _openFileDialog.FileName = e.Argument;
-            if (_openFileDialog.ShowDialog() != true) return;
+            if (_openFileDialog.ShowDialog() != true)
+            {
+                return;
+            }
+
             _viewModel.BrowseCommandCompleted(_openFileDialog.FileName);
         }
     }
