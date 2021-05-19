@@ -11,6 +11,7 @@ using AndroidXml;
 using AndroidXml.Res;
 using AndroidXmlDemo.Commands;
 using AndroidXmlDemo.Models;
+using Color = System.Windows.Media.Color;
 
 namespace AndroidXmlDemo.ViewModels
 {

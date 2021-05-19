@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Media;
 
 namespace AndroidXml.Res
 {
@@ -84,7 +83,7 @@ namespace AndroidXml.Res
             get { return (int) RawData; }
             set { RawData = (uint) value; }
         }
-
+        
         /// <summary>
         /// Gets or sets the data as a color value. Used when <see cref="DataType"/> is <see cref="ValueType.TYPE_INT_COLOR_ARGB4"/>, 
         /// <see cref="ValueType.TYPE_INT_COLOR_ARGB8"/>, <see cref="ValueType.TYPE_INT_COLOR_RGB4"/> or 
